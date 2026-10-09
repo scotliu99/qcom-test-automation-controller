@@ -232,11 +232,14 @@ bool USBDescriptors::read(QJsonObject& parentLevel)
 						usbDescriptor._revision = static_cast<quint32>(catalogData[kRevisionNumber].toInt());
 
 					if (catalogData.contains(kConfigFilePath) && catalogData[kConfigFilePath].isString())
-						usbDescriptor._configurationFilePath = catalogData[kConfigFilePath].toString().toLatin1();
+					{
+						QString configFilePath = expandPath(catalogData[kConfigFilePath].toString());
+						QFileInfo configFileInfo(configFilePath);
+						if (configFileInfo.isAbsolute() == false)
+							configFilePath = QDir(tacConfigRoot()).filePath(configFileInfo.fileName());
 
-#ifdef Q_OS_LINUX
-					usbDescriptor._configurationFilePath = expandPath(QString(usbDescriptor._configurationFilePath)).toLatin1();
-#endif
+						usbDescriptor._configurationFilePath = QDir::cleanPath(configFilePath).toLatin1();
+					}
 
 					if (usbDescriptor._debugBoardType == eFTDI)
 					{
