@@ -38,12 +38,14 @@ QString applicationBinPath()
 
 QString applicationDataPath()
 {
+	// Let embedded callers provide the QTAC runtime root without changing cwd.
 	const QString environmentConfigRoot = qEnvironmentVariable("QTAC_CONFIG_DIR").trimmed();
 	if (environmentConfigRoot.isEmpty() == false)
 	{
 		QString result = QDir::cleanPath(environmentConfigRoot);
 		QFileInfo resultFileInfo(result);
 		QDir resultDirectory(result);
+		// Normalize a direct configurations path back to the runtime root.
 		if (resultFileInfo.fileName().compare("configurations", Qt::CaseInsensitive) == 0 ||
 			QFileInfo(resultDirectory.filePath("devicelist.json")).isFile())
 		{

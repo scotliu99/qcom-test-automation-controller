@@ -235,6 +235,8 @@ bool USBDescriptors::read(QJsonObject& parentLevel)
 					{
 						QString configFilePath = expandPath(catalogData[kConfigFilePath].toString());
 						QFileInfo configFileInfo(configFilePath);
+						// Existing devicelist.json entries use paths relative to the old cwd.
+						// Resolve those by filename from the active QTAC configuration root.
 						if (configFileInfo.isAbsolute() == false)
 							configFilePath = QDir(tacConfigRoot()).filePath(configFileInfo.fileName());
 
