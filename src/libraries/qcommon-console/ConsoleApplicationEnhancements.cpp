@@ -9,13 +9,11 @@
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QDir>
-#include <QFile>
 #include <QFileInfo>
 #include <QLibrary>
 #include <QProcess>
 #include <QSettings>
 #include <QStandardPaths>
-#include <QtGlobal>
 
 #ifdef Q_OS_WINDOWS
 	#include <windows.h>
@@ -38,23 +36,6 @@ QString applicationBinPath()
 
 QString applicationDataPath()
 {
-	// Let embedded callers provide the QTAC runtime root without changing cwd.
-	const QString environmentConfigRoot = qEnvironmentVariable("QTAC_CONFIG_DIR").trimmed();
-	if (environmentConfigRoot.isEmpty() == false)
-	{
-		QString result = QDir::cleanPath(environmentConfigRoot);
-		QFileInfo resultFileInfo(result);
-		QDir resultDirectory(result);
-		// Normalize a direct configurations path back to the runtime root.
-		if (resultFileInfo.fileName().compare("configurations", Qt::CaseInsensitive) == 0 ||
-			QFileInfo(resultDirectory.filePath("devicelist.json")).isFile())
-		{
-			result = resultFileInfo.absoluteDir().absolutePath();
-		}
-
-		return result;
-	}
-
 	QString result;
 
 	#ifdef Q_OS_WIN
